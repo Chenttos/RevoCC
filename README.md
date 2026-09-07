@@ -1,4 +1,4 @@
-# AsterCC 0.2
+# RevoCC 0.2
 
 Independent clean-room Control Center editor for rootless iOS 16.
 
@@ -16,7 +16,7 @@ These selectors are publicly visible in the open-source CCAster project, but thi
 
 ## Stability model
 
-AsterCC:
+RevoCC:
 - never replaces Apple's module controllers;
 - never stores UIKit/private objects in preferences;
 - checks every private class/selector before messaging it;
@@ -28,7 +28,7 @@ AsterCC:
 
 ## Current functionality
 
-- Long press Control Center to enter AsterCC edit mode.
+- Long press Control Center to enter RevoCC edit mode.
 - Reads the real native module order.
 - Shows module identifiers in an editor panel.
 - Move a module upward.
