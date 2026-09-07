@@ -1,4 +1,4 @@
-# RevoCC 0.2.1
+# RevoCC 0.3.0
 
 RevoCC adds a clean-room Control Center chrome layer inspired by the requested
 CCAster behavior:
@@ -38,3 +38,16 @@ copied from CCAster.
     make clean package FINALPACKAGE=1
 
 No `prefs/` subproject is required.
+
+
+## 0.3.0 changes
+- Plus button now opens a functional editing overlay.
+- Long-press opens the same editor.
+- Enabled modules can be reordered by dragging.
+- Enabled modules can be removed.
+- Available native modules can be added.
+- Done saves through `CCSModuleSettingsProvider`.
+- Page count now uses the native module collection's `contentSize` and viewport height.
+- Page switching uses the native collection scroll view's `contentOffset`.
+- Page buttons are vertically centered and aligned to the Control Center edge.
+- Page buttons remain locked until presentation state 2 (fully open).
