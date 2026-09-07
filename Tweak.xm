@@ -50,11 +50,6 @@ static void RVSend1(id object, SEL selector, id argument) {
     ((void (*)(id, SEL, id))objc_msgSend)(object, selector, argument);
 }
 
-static BOOL RVSendBool1(id object, SEL selector, id argument) {
-    if (!object || ![object respondsToSelector:selector]) return NO;
-    return ((BOOL (*)(id, SEL, id))objc_msgSend)(object, selector, argument);
-}
-
 #pragma mark - Native module settings
 
 @interface RVSettings : NSObject

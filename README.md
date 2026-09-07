@@ -1,4 +1,4 @@
-# RevoCC 0.3.0
+# RevoCC 0.3.1
 
 RevoCC adds a clean-room Control Center chrome layer inspired by the requested
 CCAster behavior:
@@ -40,7 +40,7 @@ copied from CCAster.
 No `prefs/` subproject is required.
 
 
-## 0.3.0 changes
+## 0.3.1 changes
 - Plus button now opens a functional editing overlay.
 - Long-press opens the same editor.
 - Enabled modules can be reordered by dragging.
@@ -51,3 +51,7 @@ No `prefs/` subproject is required.
 - Page switching uses the native collection scroll view's `contentOffset`.
 - Page buttons are vertically centered and aligned to the Control Center edge.
 - Page buttons remain locked until presentation state 2 (fully open).
+
+
+## 0.3.1 changes
+- Fixed the GitHub Actions build failure caused by the unused `RVSendBool1` helper.

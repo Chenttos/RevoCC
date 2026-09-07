@@ -1,6 +1,6 @@
 Package: com.samuel.revocc
 Name: RevoCC
-Version: 0.3.0
+Version: 0.3.1
 Architecture: iphoneos-arm64
 Description: RevoCC Control Center editor
 Maintainer: Samuel
