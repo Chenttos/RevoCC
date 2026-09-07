@@ -1,12 +1,11 @@
 /*
- RevoCC 0.2.0
+ RevoCC 0.2.2
  Clean-room implementation of the requested Control Center chrome:
  - top editing/add button
  - top power button
  - vertical page selector
- - page selection is interactive ONLY while Control Center is opening
- - after the native presentation reaches the fully-open state, the page
-   selector remains visual but cannot switch pages.
+ - page selection is interactive ONLY after Control Center is fully open
+ - while opening or closing, the page selector is locked.
 
  The implementation is independently written. It uses the public CCAster
  repository only as a behavioral reference for the requested UI concepts.
@@ -147,6 +146,19 @@ static void RVSend1(id object, SEL selector, id argument) {
 @end
 
 #pragma mark - RevoCC chrome
+
+static BOOL RVIsControlCenterOverlayController(id controller) {
+    if (!controller)
+        return NO;
+
+    NSString *name = NSStringFromClass([controller class]);
+
+    // iOS 16 Control Center's actual modular overlay is the object that
+    // owns the module collection. Do not depend on CCUIControlCenterViewController,
+    // which is not the overlay on all iOS 16 builds.
+    return [name isEqualToString:@"CCUIModularControlCenterOverlayViewController"] ||
+           [name containsString:@"CCUIModularControlCenterOverlayViewController"];
+}
 
 @interface RVEditor : NSObject
 @property(nonatomic, weak) id host;
@@ -639,8 +651,8 @@ static BOOL gRVPresentationStateIsFullyOpen(void) {
     [self rebuildPageButtons];
 
     /*
-     Page selector interaction is deliberately shut off at the settled
-     boundary. It can be used during opening, but not after state 2.
+     Page selector interaction is deliberately enabled only at the fully-open
+     settled boundary (presentation state 2).
     */
     BOOL canSelect =
         gRVCCPresentationState == 2;
@@ -687,47 +699,54 @@ static BOOL gRVPresentationStateIsFullyOpen(void) {
 
 #pragma mark - Overlay lifecycle
 
-%hook CCUIControlCenterViewController
+%hook UIViewController
 
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
 
-    if (!RVEnabled())
+    if (!RVEnabled() || !RVIsControlCenterOverlayController(self))
         return;
 
     if (!gRVEditors)
         gRVEditors = [NSHashTable weakObjectsHashTable];
 
-    RVEditor *editor =
-        [[RVEditor alloc] initWithHost:(id)self];
+    RVEditor *existing = nil;
+    for (RVEditor *editor in gRVEditors.allObjects) {
+        if (editor.host == (id)self) {
+            existing = editor;
+            break;
+        }
+    }
 
-    [gRVEditors addObject:editor];
+    RVEditor *editor = existing ?: [[RVEditor alloc] initWithHost:(id)self];
 
-    [editor install];
+    if (!existing) {
+        [gRVEditors addObject:editor];
+        [editor install];
+    }
 
-    /*
-     The state callback normally runs before this point. Refresh once more
-     so the controls survive provider/layout rebuilds.
-    */
     dispatch_async(dispatch_get_main_queue(), ^{
-        [editor refresh];
+        if (editor.host)
+            [editor refresh];
     });
 }
 
 - (void)viewDidLayoutSubviews {
     %orig;
 
-    if (!gRVCCPresented)
+    if (!RVIsControlCenterOverlayController(self) || !gRVCCPresented)
         return;
 
     for (RVEditor *editor in gRVEditors.allObjects) {
+        if (editor.host != (id)self)
+            continue;
+
         UIView *view = [editor hostView];
+        if (!view)
+            continue;
 
-        UIView *quick =
-            [view viewWithTag:RVQuickAccessTag];
-
-        UIView *pages =
-            [view viewWithTag:RVPageSelectorTag];
+        UIView *quick = [view viewWithTag:RVQuickAccessTag];
+        UIView *pages = [view viewWithTag:RVPageSelectorTag];
 
         if (quick)
             [view bringSubviewToFront:quick];
@@ -741,6 +760,9 @@ static BOOL gRVPresentationStateIsFullyOpen(void) {
 
 - (void)viewDidDisappear:(BOOL)animated {
     %orig;
+
+    if (!RVIsControlCenterOverlayController(self))
+        return;
 
     for (RVEditor *editor in gRVEditors.allObjects) {
         if (editor.host == (id)self)
