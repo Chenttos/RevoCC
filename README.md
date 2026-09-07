@@ -1,24 +1,40 @@
-# RevoCC 0.1.2
+# RevoCC 0.2.1
 
-This release fixes the strict Clang private-controller pointer errors from CI.
+RevoCC adds a clean-room Control Center chrome layer inspired by the requested
+CCAster behavior:
 
-The previous implementation still exposed a `UIViewController *` parameter in
-the initializer. RevoCC now uses `id` throughout the private
-`CCUIControlCenterViewController` boundary, so Clang cannot compare or pass
-the private pointer type as a distinct UIKit pointer type.
+- top-left add/edit button
+- top-right power button
+- vertical page selector
+- page selection during the native Control Center opening phase
+- page selection is hard-disabled once the native presentation reaches state 2
+- runtime checks for private classes/selectors
+- no copied CCAster source
 
-The project has no `prefs` subproject.
+The public CCAster repository was inspected only as a behavioral reference
+for these requested concepts. RevoCC's implementation is independently
+written.
 
-Build:
+## Page interaction rule
+
+RevoCC intentionally uses:
+
+- state `1`: opening -> page selector can be used
+- state `2`: fully open -> page selector is visible but cannot switch pages
+- state `3`: closing -> page selector cannot be used
+- state `0`: dismissed -> chrome hidden
+
+The state is checked both while laying out the controls and at the moment a
+page button is pressed.
+
+## Important
+
+This version focuses on the requested chrome/page-selection behavior. The
+full CCAster-style drag/resize/grid editor is a separate layer and is not
+copied from CCAster.
+
+## Build
 
     make clean package FINALPACKAGE=1
 
-Core configuration provider:
-
-    CCSModuleSettingsProvider
-    sharedProvider
-    orderedUserEnabledModuleIdentifiers
-    orderedFixedModuleIdentifiers
-    setAndSaveOrderedUserEnabledModuleIdentifiers:
-
-The implementation is independently written and does not copy CCAster source.
+No `prefs/` subproject is required.
