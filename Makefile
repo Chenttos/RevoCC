@@ -4,7 +4,7 @@ INSTALL_TARGET_PROCESSES = SpringBoard
 
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = AsterCC
+TWEAK_NAME = RevoCC
 AsterCC_FILES = Tweak.xm
 AsterCC_CFLAGS = -fobjc-arc
 AsterCC_FRAMEWORKS = UIKit QuartzCore
