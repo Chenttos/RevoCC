@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = RevoCC
 RevoCC_FILES = Tweak.xm
-RevoCC_CFLAGS = -fobjc-arc
+RevoCC_CFLAGS = -fobjc-arc -Wno-error=deprecated-declarations
 RevoCC_FRAMEWORKS = UIKit QuartzCore
 RevoCC_PRIVATE_FRAMEWORKS = ControlCenterUIKit ControlCenterServices
 

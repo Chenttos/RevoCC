@@ -1,8 +1,8 @@
 Package: com.samuel.revocc
 Name: RevoCC
-Version: 0.1.0
+Version: 0.1.2
 Architecture: iphoneos-arm64
-Description: Stable Control Center editor for jailbroken iOS 16.
+Description: RevoCC Control Center editor
 Maintainer: Samuel
 Author: Samuel
 Section: Tweaks
