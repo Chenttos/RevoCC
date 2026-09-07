@@ -1,9 +1,9 @@
-Package: com.samuel.astercc
-Name: AsterCC
+Package: com.meowly.revocc
+Name: RevoCC
 Version: 0.2.0
 Architecture: iphoneos-arm64
 Description: Independent editable Control Center configuration manager for rootless iOS 16.
-Maintainer: Samuel
+Maintainer: Me0wly
 Author: Samuel
 Section: Tweaks
 Depends: mobilesubstrate
