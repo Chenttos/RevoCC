@@ -1,9 +1,9 @@
-Package: com.meowly.revocc
+Package: com.samuel.revocc
 Name: RevoCC
-Version: 0.2.0
+Version: 0.1.0
 Architecture: iphoneos-arm64
-Description: Independent editable Control Center configuration manager for rootless iOS 16.
-Maintainer: Me0wly
+Description: Stable Control Center editor for jailbroken iOS 16.
+Maintainer: Samuel
 Author: Samuel
 Section: Tweaks
 Depends: mobilesubstrate

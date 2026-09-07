@@ -1,52 +1,65 @@
-# RevoCC 0.2
+# RevoCC 0.1.0
 
-Independent clean-room Control Center editor for rootless iOS 16.
+Independent rootless Control Center editor for iOS/iPadOS 16.
 
-## What changed
+## Build fix
 
-The 0.1 prototype incorrectly treated Control Center as a collection of views. Version 0.2 uses Apple's private Control Center configuration provider as the persistence layer:
+This project intentionally has NO `SUBPROJECTS += prefs` line.
 
-- `CCSModuleSettingsProvider`
-- `sharedProvider`
-- `orderedUserEnabledModuleIdentifiers`
-- `orderedFixedModuleIdentifiers`
-- `setAndSaveOrderedUserEnabledModuleIdentifiers:`
+The previous CI failure:
 
-These selectors are publicly visible in the open-source CCAster project, but this implementation is independently written and does not copy its source.
+    make[1]: *** prefs: No such file or directory. Stop.
 
-## Stability model
+was caused by the Makefile referencing a missing `prefs/` directory.
 
-RevoCC:
-- never replaces Apple's module controllers;
-- never stores UIKit/private objects in preferences;
-- checks every private class/selector before messaging it;
-- treats fixed modules as immutable;
-- leaves native Control Center responsible for module presentation;
-- avoids rebuilding the Control Center hierarchy during editing;
-- performs provider writes as small, validated arrays;
-- uses weak editor ownership to avoid retaining dismissed Control Center instances.
+RevoCC 0.1 is a single tweak target, so Theos can build it without a preference-bundle subproject.
 
-## Current functionality
+## Configuration provider
 
-- Long press Control Center to enter RevoCC edit mode.
-- Reads the real native module order.
-- Shows module identifiers in an editor panel.
-- Move a module upward.
-- Tap a module to move it downward.
-- Detects fixed modules and refuses to reorder them.
-- Persists order through Apple's module settings provider.
-- Sends a settings-change notification.
-- Rootless Theos packaging.
-- Preferences bundle.
+When available, RevoCC uses:
 
-## Important
+- CCSModuleSettingsProvider
+- sharedProvider
+- orderedUserEnabledModuleIdentifiers
+- orderedFixedModuleIdentifiers
+- setAndSaveOrderedUserEnabledModuleIdentifiers:
 
-This is deliberately a stable core rather than a fake full clone. Full iOS 18-style behavior needs an additional layout adapter for `CCUILayoutRect`/`CCUILayoutOptions`, plus a native-safe drag/resize layer. Those pieces should be added only after verifying the exact iOS 16.7.x private class layout on-device.
+The provider is accessed dynamically so the tweak fails closed when a selector is unavailable.
+
+## Current editor
+
+Long-press Control Center to open the RevoCC editor.
+
+A module can be moved upward. Fixed modules are protected.
+
+The order is saved through the native Control Center settings provider.
+
+## Stability choices
+
+RevoCC does not:
+- replace native module controllers;
+- rebuild Apple's Control Center hierarchy;
+- store private UIKit objects in preferences;
+- message a private selector without checking it exists;
+- reorder modules marked fixed;
+- write an array containing duplicates or invalid entries.
 
 ## Build
 
-```sh
-make clean package FINALPACKAGE=1
-```
+Use a Theos environment with an iOS 16 SDK/private frameworks available:
 
-For rootless Theos with ElleKit, use the normal rootless packaging configuration on the target device.
+    make clean package FINALPACKAGE=1
+
+For rootless packaging, use your normal Theos rootless setup.
+
+## Next version
+
+The provider/order layer is intentionally separated from the UI so a later version can add:
+
+- drag and drop;
+- grid positions;
+- resizing;
+- pages;
+- add/remove controls;
+- iPad-specific layout;
+- transactional rollback.

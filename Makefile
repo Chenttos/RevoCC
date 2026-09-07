@@ -5,11 +5,9 @@ INSTALL_TARGET_PROCESSES = SpringBoard
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = RevoCC
-AsterCC_FILES = Tweak.xm
-AsterCC_CFLAGS = -fobjc-arc
-AsterCC_FRAMEWORKS = UIKit QuartzCore
-AsterCC_PRIVATE_FRAMEWORKS = ControlCenterUIKit ControlCenterServices
+RevoCC_FILES = Tweak.xm
+RevoCC_CFLAGS = -fobjc-arc
+RevoCC_FRAMEWORKS = UIKit QuartzCore
+RevoCC_PRIVATE_FRAMEWORKS = ControlCenterUIKit ControlCenterServices
 
 include $(THEOS_MAKE_PATH)/tweak.mk
-SUBPROJECTS += prefs
-include $(THEOS_MAKE_PATH)/aggregate.mk
